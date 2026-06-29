@@ -1,5 +1,21 @@
 # React + Vite
 
+
+//deploy to firebase
+cd frontend    
+npm.cmd run build
+cd ..
+firebase.cmd deploy --only hosting
+
+
+//commit & push
+git commit -m "YOU MESSGE HERE"
+git push -u origin main
+
+//push to github
+
+
+
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
 Currently, two official plugins are available:

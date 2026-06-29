@@ -6,7 +6,79 @@ import './App.css'
 import NavigationBar from "./components/NavigationBar";
 
 function App() {
-  const [count, setCount] = useState(0)
+  // message stores what the user is currently typing in the input box.
+  const [message, setMessage] = useState('')
+
+  // answer stores the text that appears in the answer box below the input.
+  const [answer, setAnswer] = useState('')
+
+  // isLoading tracks whether the frontend is waiting for the backend/Gemini.
+  const [isLoading, setIsLoading] = useState(false)
+
+  // read in server URL
+  const serverUrls = import.meta.env.VITE_SERVER_URLS.split(",");
+
+  console.log(serverUrls);
+  // [
+  //   "https://smartspeechcoach.web.app",
+  //   "http://localhost:3001"
+  // ]
+
+  const serverUrl = serverUrls[0];
+
+  console.log(serverUrl);
+  // https://smartspeechcoach.web.app
+  
+  
+  // This function runs when the user presses Enter in the form.
+  async function handleSubmit(event) {
+    // Stop the browser from refreshing the page when the form submits.
+    event.preventDefault()
+
+    // Remove extra spaces before checking or sending the question.
+    const question = message.trim()
+
+    // Do not call the backend if the input is empty.
+    if (!question) {
+      setAnswer('Please type a question first.')
+      return
+    }
+
+    // Show immediate feedback while the backend asks Gemini for an answer.
+    setIsLoading(true)
+    setAnswer('Thinking...')
+
+    try {
+      // Send the user's question to the backend.
+      // The backend keeps the Gemini API key private and calls Gemini for us.
+      // Use the port value from backend/.env when it exists.
+     
+      const response = await fetch('http://localhost:3001/api/askanything', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message: question }),
+      })
+
+      // Read the JSON response from the backend.
+      const data = await response.json()
+
+      // If the backend returned an error status, show that error to the user.
+      if (!response.ok) {
+        throw new Error(data.error || 'Unable to get an answer right now.')
+      }
+
+      // Display Gemini's answer in the answer box.
+      setAnswer(data.answer)
+    } catch (error) {
+      // If the request fails, display a simple error message in the answer box.
+      setAnswer(error.message)
+    } finally {
+      // Re-enable the input whether the request succeeded or failed.
+      setIsLoading(false)
+    }
+  }
 
   return (
     <>
@@ -22,13 +94,20 @@ function App() {
         <div>
           <h1>Ask me anything</h1>
         </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
+        <form className="question-form" onSubmit={handleSubmit}>
+          <input
+            className="question-input"
+            type="text"
+            value={message}
+            onChange={(event) => setMessage(event.target.value)}
+            placeholder="Type your question"
+            aria-label="Type your question"
+            disabled={isLoading}
+          />
+        </form>
+        <div className="answer-box" aria-live="polite">
+          {answer}
+        </div>
       </section>
 
       <div className="ticks"></div>
