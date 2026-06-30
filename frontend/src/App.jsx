@@ -15,19 +15,12 @@ function App() {
   // isLoading tracks whether the frontend is waiting for the backend/Gemini.
   const [isLoading, setIsLoading] = useState(false)
 
-  // read in server URL
-  const serverUrls = import.meta.env.VITE_SERVER_URLS.split(",");
-
-  console.log(serverUrls);
-  // [
-  //   "https://smartspeechcoach.web.app",
-  //   "http://localhost:3001"
-  // ]
-
-  const serverUrl = serverUrls[0];
-
-  console.log(serverUrl);
-  // https://smartspeechcoach.web.app
+  // Read the backend server URL from frontend/.env.
+  // Vite exposes frontend environment variables that start with VITE_.
+  const serverUrls = import.meta.env.VITE_SERVER_URLS?.split(',') || [
+    'http://localhost:3001',
+  ]
+  const serverUrl = serverUrls[0].trim()
   
   
   // This function runs when the user presses Enter in the form.
@@ -53,7 +46,7 @@ function App() {
       // The backend keeps the Gemini API key private and calls Gemini for us.
       // Use the port value from backend/.env when it exists.
      
-      const response = await fetch('http://localhost:3001/api/askanything', {
+      const response = await fetch(`${serverUrl}/api/askanything`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
