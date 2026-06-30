@@ -6,9 +6,9 @@ import { GoogleGenAI } from '@google/genai';
 // Create the Express application. Express handles our backend routes.
 const app = express();
 
-// Use the port value from backend/.env when it exists.
-// If port is not set, the backend runs on port 3001.
-const port = process.env.port || 3001;
+// Use Cloud Run's PORT value when deployed, or the port value from backend/.env locally.
+// If neither is set, the backend runs on port 3001.
+const port = process.env.PORT || 3001;
 
 // Read allowedOrigins from backend/.env as a comma-separated list.
 // Example: allowedOrigins=http://localhost:5173,http://127.0.0.1:5173

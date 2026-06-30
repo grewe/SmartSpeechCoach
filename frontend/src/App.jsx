@@ -15,12 +15,13 @@ function App() {
   // isLoading tracks whether the frontend is waiting for the backend/Gemini.
   const [isLoading, setIsLoading] = useState(false)
 
-  // Read the backend server URL from frontend/.env.
+  // Read the backend server settings from frontend/.env.
   // Vite exposes frontend environment variables that start with VITE_.
-  const serverUrls = import.meta.env.VITE_SERVER_URLS?.split(',') || [
-    'http://localhost:3001',
-  ]
-  const serverUrl = serverUrls[0].trim()
+  const serverRemote = import.meta.env.VITE_SERVER_REMOTE
+  const serverUrl =
+    serverRemote === 'Y'
+      ? import.meta.env.VITE_SERVER_URL_REMOTE
+      : import.meta.env.VITE_SERVER_URL_LOCAL
   
   
   // This function runs when the user presses Enter in the form.

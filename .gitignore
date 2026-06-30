@@ -13,7 +13,10 @@ dist-ssr
 .firebase/
 *.local
 .env
+frontend/.env
 backend/.env
+backend/cloudrun.env
+backend/.env.cloudrun
 
 # Editor directories and files
 .vscode/*
